@@ -23,6 +23,7 @@ namespace NWBackendAPI.Models
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<CustomerAndSuppliersByCity> CustomerAndSuppliersByCities { get; set; } = null!;
         public virtual DbSet<CustomerDemographic> CustomerDemographics { get; set; } = null!;
+        public virtual DbSet<Documentation> Documentations { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Invoice> Invoices { get; set; } = null!;
         public virtual DbSet<Login> Logins { get; set; } = null!;
@@ -199,6 +200,21 @@ namespace NWBackendAPI.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.CustomerDesc).HasColumnType("ntext");
+            });
+
+            modelBuilder.Entity<Documentation>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Documentation");
+
+                entity.Property(e => e.AvailableRoute).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.DocumentationId).HasColumnName("DocumentationID");
+
+                entity.Property(e => e.Method).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Employee>(entity =>
