@@ -11,7 +11,14 @@ namespace NWBackendAPI.Controllers
     [ApiController]
     public class DocumentationController : ControllerBase
     {
-        NorthwindOriginalContext db = new();
+        //private readonly NorthwindOriginalContext db = new();
+
+        private readonly NorthwindOriginalContext db;
+
+        public DocumentationController(NorthwindOriginalContext dbparametri)
+        {
+            db = dbparametri;
+        }
 
 
         [HttpGet]
@@ -22,50 +29,67 @@ namespace NWBackendAPI.Controllers
         }
 
 
+        [HttpGet("{keycode}")]
 
-        [HttpGet("{id:int}")]
-        public ActionResult GetDocumentationById(int id)
+        public ActionResult GetDocumentation(string keycode)
         {
-            try
+            if (keycode == "WB")
             {
-                var documentation = db.Documentations.FirstOrDefault(d => d.DocumentationId == id);
-                if (documentation != null)
-                {
-                    return Ok(documentation);
-                }
-                return NotFound($"Documentation with ID {id} not found at {DateTime.Now}");
+                var docs = db.Documentations.ToList();
+                return Ok(docs);
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest($"Error: {ex.Message}");
+                return Unauthorized("Invalid Keycode");
             }
         }
 
-        private readonly NorthwindOriginalContext _context = new();
-        private const string KeyCode = "123";
+
+
+
+        //[HttpGet("{id}")]
+        //public ActionResult GetDocumentationById(int id)
+        //{
+        //    try
+        //    {
+        //        var documentation = db.Documentations.FirstOrDefault(d => d.DocumentationId == id);
+        //        if (documentation != null)
+        //        {
+        //            return Ok(documentation);
+        //        }
+        //        return NotFound($"Documentation with ID {id} not found at {DateTime.Now}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Error: {ex.Message}");
+        //    }
+        //}
+
+        //private readonly NorthwindOriginalContext _context = new();
+        //private const string KeyCode = "123";
 
         //public DocumentationController(NorthwindOriginalContext context)
         //{
         //    _context = context;
         //}
 
-        [HttpGet("{keycode}")]
-        public ActionResult GetDocumentationByKeycode(string keycode)
-        {
-            if (keycode == KeyCode)
-            {
-                var documentation = _context.Documentations.ToList();
-                if (documentation.Any())
-                {
-                    return Ok(documentation);
-                }
-                return NotFound("Documentation is empty");
-            }
-            else
-            {
-                return NotFound($"Documentation missing at {DateTime.Now}");
-            }
-        }
+        //[HttpGet("{keycode}")]
+        //public ActionResult GetDocumentationByKeycode(string keycode)
+        //{
+        //    if (keycode == KeyCode)
+        //    {
+        //        var documentation = _context.Documentations.ToList();
+        //        if (documentation.Any())
+        //        {
+        //            return Ok(documentation);
+        //        }
+        //        return NotFound("Documentation is empty");
+        //    }
+        //    else
+        //    {
+        //        return NotFound($"Documentation missing at {DateTime.Now}");
+        //    }
+        //}
 
     }
 }

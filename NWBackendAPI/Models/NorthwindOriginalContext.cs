@@ -52,8 +52,7 @@ namespace NWBackendAPI.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-4VEBEC1;Database=NorthwindOriginal;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("SECRET");
             }
         }
 
@@ -204,15 +203,13 @@ namespace NWBackendAPI.Models
 
             modelBuilder.Entity<Documentation>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("Documentation");
+
+                entity.Property(e => e.DocumentationId).HasColumnName("DocumentationID");
 
                 entity.Property(e => e.AvailableRoute).HasMaxLength(50);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.DocumentationId).HasColumnName("DocumentationID");
 
                 entity.Property(e => e.Method).HasMaxLength(50);
             });

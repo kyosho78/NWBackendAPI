@@ -10,7 +10,15 @@ namespace NWBackendAPI.Controllers
     public class CustomersController : ControllerBase
     {
         //Luodaan tietokantayhteys, db on Olio-ohjelmoinnin käsitteitä
-        NorthwindOriginalContext db = new();
+        //private readonly NorthwindOriginalContext db = new();
+
+        //Dependency Injection, tietokantayhteys injektoidaan kontrolleriin
+        private readonly NorthwindOriginalContext db;
+
+        public CustomersController(NorthwindOriginalContext dbparametri)
+        {
+            db = dbparametri;
+        }
 
         //Hakee kaikki asiakkaat
         [HttpGet]
@@ -74,6 +82,40 @@ namespace NWBackendAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Virhe {ex.Message}");
+            }
+        }
+
+        //Asiakkaan haku companynamen perusteella, nimen osa riittää
+        [HttpGet("company/{companyname}")]
+        //Metodi 
+        public ActionResult SearchCustomerByCompanyName(string companyname)
+        //Contains metodi etsii osaa nimestä(lambda funktio)
+        {
+            var asiakkaat = db.Customers.Where(c => c.CompanyName.Contains(companyname));
+            //var asiakkaat = db.Customers.Where(c => c.CompanyName == companyname); <--- Tämä etsii tasan tietyn nimen
+            //var asiakkaat = from c db.Customers where c.CompanyName.Contains(companyname); <--- Toinen tapa tehdä sama asia
+
+            return Ok(asiakkaat);
+        }
+
+        //Asiakkaan muokkaaminen
+        [HttpPut("{id}")]
+        public ActionResult EditCustomer(string id, [FromBody] Customer customer)
+        {
+
+            //Haetaan id:n perusteella tietokannasta vanha asiakasobjekti
+            var asiakas = db.Customers.Find(id);
+            if (asiakas != null)
+            {
+                //Etsitään asiakas ja päivitetään sen tiedot
+                asiakas = customer;
+
+                db.SaveChanges();
+                return Ok($"Asiakkaan {asiakas.CompanyName} tiedot päivitetty");
+            }
+            else
+            {
+                return NotFound($"Asiakasta {id} ei löydy");
             }
         }
     }
