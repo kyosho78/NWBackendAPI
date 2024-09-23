@@ -13,33 +13,37 @@ namespace NWBackendAPI.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly NorthwindOriginalContext _context;
+        //Luodaan tietokantayhteys, db on Olio-ohjelmoinnin käsitteitä
+        //private readonly NorthwindOriginalContext db = new();
 
-        public EmployeesController(NorthwindOriginalContext context)
+        //Dependency Injection, tietokantayhteys injektoidaan kontrolleriin
+        private readonly NorthwindOriginalContext db;
+
+        public EmployeesController(NorthwindOriginalContext dbparametri)
         {
-            _context = context;
+            db = dbparametri;
         }
 
         // GET: api/Employees
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-          if (_context.Employees == null)
+          if (db.Employees == null)
           {
               return NotFound();
           }
-            return await _context.Employees.ToListAsync();
+            return await db.Employees.ToListAsync();
         }
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-          if (_context.Employees == null)
+          if (db.Employees == null)
           {
               return NotFound();
           }
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await db.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -59,11 +63,11 @@ namespace NWBackendAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(employee).State = EntityState.Modified;
+            db.Entry(employee).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,12 +89,12 @@ namespace NWBackendAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
-          if (_context.Employees == null)
+          if (db.Employees == null)
           {
               return Problem("Entity set 'NorthwindOriginalContext.Employees'  is null.");
           }
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
+            db.Employees.Add(employee);
+            await db.SaveChangesAsync();
 
             return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
         }
@@ -99,25 +103,25 @@ namespace NWBackendAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
-            if (_context.Employees == null)
+            if (db.Employees == null)
             {
                 return NotFound();
             }
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await db.Employees.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
             }
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
+            db.Employees.Remove(employee);
+            await db.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool EmployeeExists(int id)
         {
-            return (_context.Employees?.Any(e => e.EmployeeId == id)).GetValueOrDefault();
+            return (db.Employees?.Any(e => e.EmployeeId == id)).GetValueOrDefault();
         }
     }
 }

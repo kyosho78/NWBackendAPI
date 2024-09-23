@@ -13,33 +13,37 @@ namespace NWBackendAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly NorthwindOriginalContext _context;
+        //Luodaan tietokantayhteys, db on Olio-ohjelmoinnin käsitteitä
+        //private readonly NorthwindOriginalContext db = new();
 
-        public ProductsController(NorthwindOriginalContext context)
+        //Dependency Injection, tietokantayhteys injektoidaan kontrolleriin
+        private readonly NorthwindOriginalContext db;
+
+        public ProductsController(NorthwindOriginalContext dbparametri)
         {
-            _context = context;
+            db = dbparametri;
         }
 
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-          if (_context.Products == null)
+          if (db.Products == null)
           {
               return NotFound();
           }
-            return await _context.Products.ToListAsync();
+            return await db.Products.ToListAsync();
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-          if (_context.Products == null)
+          if (db.Products == null)
           {
               return NotFound();
           }
-            var product = await _context.Products.FindAsync(id);
+            var product = await db.Products.FindAsync(id);
 
             if (product == null)
             {
@@ -59,11 +63,11 @@ namespace NWBackendAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            db.Entry(product).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,12 +89,12 @@ namespace NWBackendAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-          if (_context.Products == null)
+          if (db.Products == null)
           {
               return Problem("Entity set 'NorthwindOriginalContext.Products'  is null.");
           }
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            db.Products.Add(product);
+            await db.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
         }
@@ -99,25 +103,25 @@ namespace NWBackendAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            if (_context.Products == null)
+            if (db.Products == null)
             {
                 return NotFound();
             }
-            var product = await _context.Products.FindAsync(id);
+            var product = await db.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            db.Products.Remove(product);
+            await db.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool ProductExists(int id)
         {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+            return (db.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
         }
     }
 }
