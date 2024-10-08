@@ -52,8 +52,9 @@ namespace NWBackendAPI.Controllers
                 db.Customers.Add(customer);
                 db.SaveChanges();
 
-                //Tämä palauttaa vastauksen, että onnistui
-                return Ok($"Lisätty uusi {customer.CompanyName}");
+            //Tämä palauttaa vastauksen, että onnistui
+            return Ok(new { message = $"Lisätty uusi asiakas: {customer.CompanyName}" });
+
 
         }
 
