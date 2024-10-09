@@ -53,7 +53,7 @@ namespace NWBackendAPI.Controllers
                 db.SaveChanges();
 
             //Tämä palauttaa vastauksen, että onnistui
-            return Ok(new { message = $"Lisätty uusi asiakas: {customer.CompanyName}" });
+            return Ok($"Lisätty uusi {customer.CompanyName}");
 
 
         }
