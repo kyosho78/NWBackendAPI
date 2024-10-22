@@ -26,14 +26,30 @@ namespace NWBackendAPI.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int? categoryId, decimal? minPrice, decimal? maxPrice)
         {
-          if (db.Products == null)
-          {
-              return NotFound();
-          }
-            return await db.Products.ToListAsync();
+            var productsQuery = db.Products.AsQueryable();
+
+            //Filteröidään tuotteita, Idn perusteella
+            if (categoryId.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            //Filteröidään tuotteita, hinnan perusteella
+            if (minPrice.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.UnitPrice >= minPrice.Value);
+            }
+            if (maxPrice.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.UnitPrice <= maxPrice.Value);
+            }
+
+            return await productsQuery.ToListAsync();
         }
+
+
 
         // GET: api/Products/5
         [HttpGet("{id}")]
