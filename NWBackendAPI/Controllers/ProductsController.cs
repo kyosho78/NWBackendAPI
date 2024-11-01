@@ -132,7 +132,7 @@ namespace NWBackendAPI.Controllers
             db.Products.Remove(product);
             await db.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Product removed!");
         }
 
         private bool ProductExists(int id)

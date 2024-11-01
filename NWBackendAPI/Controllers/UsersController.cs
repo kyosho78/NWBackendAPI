@@ -112,7 +112,7 @@ namespace NWBackendAPI.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("User removed!");
         }
 
         private bool UserExists(int id)
