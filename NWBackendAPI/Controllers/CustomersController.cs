@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NWBackendAPI.Models;
 using System.Reflection;
 
 namespace NWBackendAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -109,7 +112,15 @@ namespace NWBackendAPI.Controllers
             if (asiakas != null)
             {
                 //Etsitään asiakas ja päivitetään sen tiedot
-                asiakas = customer;
+                asiakas.CompanyName = customer.CompanyName;
+                asiakas.ContactName = customer.ContactName;
+                asiakas.ContactTitle = customer.ContactTitle;
+                asiakas.Country = customer.Country;
+                asiakas.Address = customer.Address;
+                asiakas.City = customer.City;
+                asiakas.PostalCode = customer.PostalCode;
+                asiakas.Phone = customer.Phone;
+                asiakas.Fax = customer.Fax;
 
                 db.SaveChanges();
                 return Ok($"Asiakkaan {asiakas.CompanyName} tiedot päivitetty");
