@@ -112,7 +112,7 @@ namespace NWBackendAPI.Controllers
             db.Products.Add(product);
             await db.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, product);
         }
 
         // DELETE: api/Products/5
